@@ -47,6 +47,7 @@ include { INPUT_CHECK } from '../subworkflows/local/input_check'
 //
 include { FASTQC                      } from '../modules/nf-core/modules/fastqc/main'
 include { RGI_MAIN                    } from '../modules/nf-core/modules/rgi/main/main'
+include { MOBSUITE_RECON              } from '../modules/nf-core/modules/mobsuite/recon/main'
 include { MULTIQC                     } from '../modules/nf-core/modules/multiqc/main'
 include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/modules/custom/dumpsoftwareversions/main'
 
@@ -75,6 +76,11 @@ workflow PATOGENER {
         INPUT_CHECK.out.assemblies
     )
     ch_versions = ch_versions.mix(RGI_MAIN.out.versions)
+
+    MOBSUITE_RECON(
+        INPUT_CHECK.out.assemblies
+    )
+    ch_versions = ch_versions.mix(MOBSUITE_RECON.out.versions)
 
     CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_versions.unique().collectFile(name: 'collated_versions.yml')
