@@ -26,16 +26,16 @@ class RowChecker:
     """
 
     VALID_FORMATS = (
-        ".fq.gz",
-        ".fastq.gz",
+        ".fa.gz",
+        ".fasta.gz",
+        ".fa",
+        ".fasta"
     )
 
     def __init__(
         self,
         sample_col="sample",
-        first_col="fastq_1",
-        second_col="fastq_2",
-        single_col="single_end",
+        first_col="fasta",
         **kwargs,
     ):
         """
@@ -56,8 +56,6 @@ class RowChecker:
         super().__init__(**kwargs)
         self._sample_col = sample_col
         self._first_col = first_col
-        self._second_col = second_col
-        self._single_col = single_col
         self._seen = set()
         self.modified = []
 
@@ -72,8 +70,8 @@ class RowChecker:
         """
         self._validate_sample(row)
         self._validate_first(row)
-        self._validate_second(row)
-        self._validate_pair(row)
+        # self._validate_second(row)
+        # self._validate_pair(row)
         self._seen.add((row[self._sample_col], row[self._first_col]))
         self.modified.append(row)
 
@@ -180,7 +178,7 @@ def check_samplesheet(file_in, file_out):
         https://raw.githubusercontent.com/nf-core/test-datasets/viralrecon/samplesheet/samplesheet_test_illumina_amplicon.csv
 
     """
-    required_columns = {"sample", "fastq_1", "fastq_2"}
+    required_columns = {"sample", "fasta"}
     # See https://docs.python.org/3.9/library/csv.html#id3 to read up on `newline=""`.
     with file_in.open(newline="") as in_handle:
         reader = csv.DictReader(in_handle, dialect=sniff_format(in_handle))
